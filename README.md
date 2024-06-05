@@ -14,6 +14,9 @@
 ### 例
 対象 `X`<br>
 Func `ReT = _FRAME //こうすると1フレームに1px右に進む`
+* 円運動 
+  * 対象 `X` Func `ReT = 300*math.sin(math.pi/128*_FRAME)`
+  * 対象 `Y` Func `ReT = 300*math.cos(math.pi/128*_FRAME)`
 ## 特殊な変数
 * `ReT` プログラム終了時この変数に格納されている数値が対象に反映されます
 * `_FRAME` オブジェクトの初めから見た現在のフレームが格納されています
