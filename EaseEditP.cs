@@ -6,6 +6,8 @@ namespace YMMCustomEaseK
 {
     internal class EaseEditP : IVideoEffectProcessor
     {
+        string temp;
+
         readonly EaseEdit item;
         ID2D1Image? input;
 
@@ -41,10 +43,11 @@ namespace YMMCustomEaseK
             script.Globals["_Z"] = effectDescription.DrawDescription.Zoom.X;
             script.Globals["_CX"] = effectDescription.DrawDescription.CenterPoint.X;
             script.Globals["_CY"] = effectDescription.DrawDescription.CenterPoint.Y;
-
+            script.Globals["TEMP"] = temp;
             try { script.DoString(text); } catch (Exception ex) { /*item.Error = Convert.ToString(ex);*/ };
 
             var ReT = script.Globals["ReT"];
+            temp = (string)script.Globals["TEMP"];
 
             /*//これが一番最初に書いたコード
             double t = (double)frame / (double)length;
