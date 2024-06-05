@@ -2,6 +2,7 @@
 using Vortice.Direct2D1;
 using YukkuriMovieMaker.Player.Video;
 
+//深夜テンションで作ったクソコード達
 namespace YMMCustomEaseK
 {
     internal class EaseEditP : IVideoEffectProcessor
