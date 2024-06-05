@@ -1,8 +1,7 @@
-﻿using MoonSharp.Interpreter;
+using MoonSharp.Interpreter;
 using Vortice.Direct2D1;
 using YukkuriMovieMaker.Player.Video;
 
-//深夜テンションで作ったクソコード達
 namespace YMMCustomEaseK
 {
     internal class EaseEditP : IVideoEffectProcessor
@@ -25,6 +24,7 @@ namespace YMMCustomEaseK
             var frame = effectDescription.ItemPosition.Frame;
             var length = effectDescription.ItemDuration.Frame;
             var fps = effectDescription.FPS;
+            var layer = effectDescription.Layer;
 
             var subject = item.Enum;
             var text = item.Text;
@@ -34,16 +34,19 @@ namespace YMMCustomEaseK
             script.Globals["_FRAME"] = frame;
             script.Globals["_LENGTH"] = length;
             script.Globals["_FPS"] = fps;
-
-            /*script.Globals["X1"] = x1;
-            script.Globals["X2"] = x2;*/
-
+            script.Globals["_LAYER"] = layer; 
+            script.Globals["_X"] = effectDescription.DrawDescription.DrawPoint.X;
+            script.Globals["_Y"] = effectDescription.DrawDescription.DrawPoint.Y;
+            script.Globals["_R"] = effectDescription.DrawDescription.Rotation.Z;
+            script.Globals["_Z"] = effectDescription.DrawDescription.Zoom.X;
+            script.Globals["_CX"] = effectDescription.DrawDescription.CenterPoint.X;
+            script.Globals["_CY"] = effectDescription.DrawDescription.CenterPoint.Y;
 
             try { script.DoString(text); } catch (Exception ex) { /*item.Error = Convert.ToString(ex);*/ };
 
             var ReT = script.Globals["ReT"];
 
-            /*
+            /*//これが一番最初に書いたコード
             double t = (double)frame / (double)length;
             double easeT = Math.Pow((1 - Math.Cos(t * Math.PI)) / 2, len);
             var ret = x1 + (x2 - x1) * easeT;
@@ -69,14 +72,14 @@ namespace YMMCustomEaseK
                         effectDescription.DrawDescription.DrawPoint.X,
                         effectDescription.DrawDescription.DrawPoint.Y + Convert.ToSingle(ReT)
                         ));
-                case "R"://TODO:実装
-                    return effectDescription.DrawDescription;/*new DrawDescription(
+                case "R":
+                    return new DrawDescription(
                         effectDescription.DrawDescription,
                         rotation: new System.Numerics.Vector3(
-                            effectDescription.DrawDescription.Rotation.X + Convert.ToSingle(ReT),
-                            effectDescription.DrawDescription.Rotation.Y + Convert.ToSingle(ReT),
+                            effectDescription.DrawDescription.Rotation.X,
+                            effectDescription.DrawDescription.Rotation.Y,
                             effectDescription.DrawDescription.Rotation.Z + Convert.ToSingle(ReT)
-                            ));*/
+                            ));
                 case "Z":
                     return new DrawDescription(
                         effectDescription.DrawDescription,
