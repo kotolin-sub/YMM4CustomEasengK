@@ -39,7 +39,7 @@ namespace YMMCustomEaseK
             script.Globals["X2"] = x2;*/
 
 
-            try { script.DoString(text); } catch (Exception ex) { item.Error = Convert.ToString(ex); };
+            try { script.DoString(text); } catch (Exception ex) { /*item.Error = Convert.ToString(ex);*/ };
 
             var ReT = script.Globals["ReT"];
 
