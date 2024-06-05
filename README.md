@@ -25,3 +25,5 @@ Func `ReT = _FRAME //こうすると1フレームに1px右に進む`
 ## その他
 * licenseはmoonsharpに帰属
 * バグやら意見やら見つけたら@kotolind2a1に頼む
+
+理論上どんな動きも可能だぜ
