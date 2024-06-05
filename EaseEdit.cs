@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -69,8 +69,12 @@ namespace YMMCustomEaseK
             Y,
             [Display(Name = "拡大率")]
             Z,
-            [Display(Name ="回転角(なんかよくわかんないので未実装)")]
-            R,
+            [Display(Name ="回転角")]
+            R
+            /*[Display(Name ="中心座標(X)")]
+            CX,
+            [Display(Name ="中心座標(Y)")]
+            CY*/
         }
     }
 }
