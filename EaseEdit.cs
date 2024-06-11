@@ -1,52 +1,42 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+﻿using System.ComponentModel.DataAnnotations;
 using YukkuriMovieMaker.Commons;
 using YukkuriMovieMaker.Controls;
 using YukkuriMovieMaker.Exo;
 using YukkuriMovieMaker.Player.Video;
+using YukkuriMovieMaker.Plugin;
 using YukkuriMovieMaker.Plugin.Effects;
 
 namespace YMMCustomEaseK
 {
-    [VideoEffect("カスタムイージングK", new[] { "" }, new string[] { })]
+    [VideoEffect("カスタムイージングK", new[] { "配置" }, new string[] { }, isAviUtlSupported: false)]
     internal class EaseEdit : VideoEffectBase
     {
 
-
         public override string Label => "カスタムイージングK";
-        /*[Display(Name = "X1", Description = "X1")]
-        [AnimationSlider("F0", "", -100, 100)]
-        public Animation X1 { get; } = new Animation(0, -10000, 10000);
 
-        [Display(Name = "X2", Description = "X2")]
-        [AnimationSlider("F0", "", -100, 100)]
-        public Animation X2 { get; } = new Animation(0, -10000, 10000);*/
-
-        [Display(Name = "Func", Description = "Func")]
-        [TextEditor(AcceptsReturn = true)]
+        [Display(Name = "Func")]
+        [TextEditor(AcceptsReturn = true, MinHeight = 100)]
         public string Text { get => text; set => Set(ref text, value); }
-        string text = string.Empty;
+        string text = "return 0";
 
-        [Display(Name = "error", Description = "error")]
+        /*[Display(Name = "error", Description = "error")]
         [TextEditor(AcceptsReturn = true)]
         public string Error { get => text; set => Set(ref text, value); }
-        string error = string.Empty;
+        string error = string.Empty;*/
 
-        //対象を設定できるようにしてた時の残骸
+        //対象を設定できるようにしてた時
         //かと思ったけど普通にそのまま
         [Display(Name = "対象")]
-        [EnumComboBox]
+        [EnumComboBox()]
         public Subject Enum { get => subject; set => Set(ref subject, value); }
         Subject subject = Subject.X;
 
-        [Display(GroupName = "グループ名", Name = "(関係ないよ)こいつを消す方法を教えてくれnull入れると堕ちるんだ", Description = "項目の説明")]
-        [AnimationSlider("F0", "%", 0, 100)]
-        public Animation Animation { get; } = new Animation(100, 0, 100);
+        [Display(Name = "スクリプト")]
+        [FileSelector(YukkuriMovieMaker.Settings.FileGroupType.None)]
+        public string File { get => file; set => Set(ref file, value); }
+        string file = "";
+
+        public Animation piyo { get; } = new Animation(100, 0, 100);
 
         //よく見てないのでサンプルのまま
         public override IEnumerable<string> CreateExoVideoFilters(int keyFrameIndex, ExoOutputDescription exoOutputDescription)
@@ -59,7 +49,7 @@ namespace YMMCustomEaseK
             return new EaseEditP(this);
         }
 
-        protected override IEnumerable<IAnimatable> GetAnimatables() => new[] { Animation };
+        protected override IEnumerable<IAnimatable> GetAnimatables() => new[] { piyo };
 
         public enum Subject
         {
@@ -69,12 +59,71 @@ namespace YMMCustomEaseK
             Y,
             [Display(Name = "拡大率")]
             Z,
-            [Display(Name ="回転角")]
-            R
-            /*[Display(Name ="中心座標(X)")]
+            [Display(Name = "Z回転角")]
+            R,
+            [Display(Name = "X回転角")]
+            XR,
+            [Display(Name = "Y回転角")]
+            YR,
+            /*[Display(Name = "反転")]
+            INV
+            [Display(Name ="中心座標(X)")]
             CX,
             [Display(Name ="中心座標(Y)")]
             CY*/
         }
     }
+
+    /*public class EaseEditStart : IPlugin //ここコンボボックスに一覧で出そうとした残骸誰か実装したらプルリクしてね♡
+    {
+        public string Name => "カスタムイージングKStartUp";
+
+        static EaseEditStart()
+        {
+            string directoryPath = @".\user\plugin\CustomEasengK\script";
+
+            if (!Directory.Exists(directoryPath))
+            {
+                return;
+            }
+
+            List<FileData> filesData = GetFilesData(directoryPath);
+
+            string json = JsonSerializer.Serialize(filesData, new JsonSerializerOptions
+            {
+                WriteIndented = true
+            });
+
+
+            File.WriteAllText(@".\user\plugin\CustomEasengK\anmlist.json", json);
+        }
+
+        static List<FileData> GetFilesData(string directoryPath)
+        {
+            List<FileData> filesData = new List<FileData>();
+
+            try
+            {
+                string[] files = Directory.GetFiles(directoryPath, "*", SearchOption.AllDirectories);
+
+                foreach (string filePath in files)
+                {
+                    string fileName = Path.GetFileNameWithoutExtension(filePath);
+
+                    FileData fileData = new FileData
+                    {
+                        FileName = fileName,
+                        FilePath = filePath 
+                    };
+
+                    filesData.Add(fileData);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+
+            return filesData;
+        }
+    }*/
 }
