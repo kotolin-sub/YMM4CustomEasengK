@@ -12,7 +12,7 @@ using YukkuriMovieMaker.Controls;
 using YukkuriMovieMaker.Exo;
 
 namespace YMMCustomEase_K_
-{   //ここのコメントアウトを外すと音程操作が使えるようになる
+{   //ここのコメントアウトを外すと音程操作が使えるようになる。ただしDotNetWorldが必要
     /*[AudioEffect("音程操作", new[] { "フィルター" }, new string[] { }, isAviUtlSupported: false)]*/
     public class EaseEditA : AudioEffectBase
     {
