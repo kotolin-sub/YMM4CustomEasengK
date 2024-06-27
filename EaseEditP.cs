@@ -2,16 +2,28 @@
 using System.IO;
 using System.Runtime.InteropServices;
 using Vortice.Direct2D1;
+using YMM4GlobalVar;
+using YukkuriMovieMaker.Commons;
 using YukkuriMovieMaker.Player.Video;
 
 namespace YMMCustomEaseK
 {
     internal class EaseEditP : IVideoEffectProcessor
     {
-        string temp;
-
+        BridgePlugin bridge = new BridgePlugin();
+        readonly private IGraphicsDevicesAndContext devices;
         readonly EaseEdit item;
         ID2D1Image? input;
+        double ReT = 0;
+
+        private static readonly IntPtr sharedLuaState;
+        private static readonly object luaLock = new object();
+
+        static EaseEditP()
+        {
+            sharedLuaState = LuaJIT.luaL_newstate();
+            LuaJIT.luaL_openlibs(sharedLuaState);
+        }
 
         public ID2D1Image Output => input ?? throw new NullReferenceException(nameof(input) + " は null です");
 
@@ -19,9 +31,7 @@ namespace YMMCustomEaseK
         {
             this.item = item;
         }
-
-        double ReT = 0;
-
+        
         [Obsolete]
         public DrawDescription Update(EffectDescription effectDescription)
         {
@@ -45,49 +55,47 @@ namespace YMMCustomEaseK
             var subject = item.Enum;
             var text = item.Text;
 
-
             ReT = 0;
-            IntPtr luaState = LuaJIT.luaL_newstate();
-            LuaJIT.luaL_openlibs(luaState);
-
 
             string luaScriptPrefix = $@"
-            _FRAME={frame} 
-            _LENGTH={length} 
-            _FPS={fps} 
-            _LAYER={layer} 
-            _X={x} 
-            _Y={y} 
-            _Z={zp}
-            _R={r}
-            _RX={xr}
-            _RY={yr}
-            _ZO={zo} 
-            _CX={cx} 
-            _CY={cy}
+            local _FRAME={frame} 
+            local _LENGTH={length} 
+            local _FPS={fps} 
+            local _LAYER={layer} 
+            local _X={x} 
+            local _Y={y} 
+            local _Z={zp}
+            local _R={r}
+            local _RX={xr}
+            local _RY={yr}
+            local _ZO={zo} 
+            local _CX={cx} 
+            local _CY={cy}
             ";
 
-            try { text = File.ReadAllText(file); } catch { } 
+            try { text = File.ReadAllText(file); } catch { }
 
             string luaScript = luaScriptPrefix + "\n" + text;
 
-            try
+            lock (luaLock)
             {
-                if (LuaJIT.luaL_loadstring(luaState, luaScript) == 0 && LuaJIT.lua_pcall(luaState, 0, 1, 0) == 0)
+                try
                 {
-                    int top = LuaJIT.lua_gettop(luaState);
-
-                    if (top == 1)
+                    if (LuaJIT.luaL_loadstring(sharedLuaState, luaScript) == 0 && LuaJIT.lua_pcall(sharedLuaState, 0, 1, 0) == 0)
                     {
-                        ReT = LuaJIT.lua_tonumber(luaState, -1);
+                        int top = LuaJIT.lua_gettop(sharedLuaState);
+
+                        if (top == 1)
+                        {
+                            ReT = LuaJIT.lua_tonumber(sharedLuaState, -1);
+                        }
                     }
                 }
+                finally
+                {
+                    LuaJIT.lua_settop(sharedLuaState, 0);
+                }
             }
-            finally
-            {
-                LuaJIT.lua_close(luaState);
-            }
-
 
             return subject switch
             {
@@ -103,6 +111,11 @@ namespace YMMCustomEaseK
                         drawDesc.DrawPoint.X,
                         drawDesc.DrawPoint.Y + Convert.ToSingle(ReT)
                     )),
+                EaseEdit.Subject.ZX => new DrawDescription(
+                    drawDesc,
+                    draw: new System.Numerics.Vector3(
+                        (float)(drawDesc.DrawPointZ + ReT)
+                        )),
                 EaseEdit.Subject.R => new DrawDescription(
                     drawDesc,
                     rotation: new System.Numerics.Vector3(
@@ -141,7 +154,6 @@ namespace YMMCustomEaseK
         {
         }
 
-        // LuaJIT用の関数群
         class LuaJIT
         {
             private const string Lua51Dll = "lua51.dll";
@@ -153,19 +165,30 @@ namespace YMMCustomEaseK
             public static extern void luaL_openlibs(IntPtr luaState);
 
             [DllImport(Lua51Dll, CallingConvention = CallingConvention.Cdecl)]
+            public static extern void lua_close(IntPtr luaState);
+
+            [DllImport(Lua51Dll, CallingConvention = CallingConvention.Cdecl)]
+            public static extern void lua_pushcclosure(IntPtr luaState, LuaCSFunction function, int n);
+
+            [DllImport(Lua51Dll, CallingConvention = CallingConvention.Cdecl)]
+            public static extern void lua_setglobal(IntPtr luaState, string name);
+
+            [DllImport(Lua51Dll, CallingConvention = CallingConvention.Cdecl)]
             public static extern int luaL_loadstring(IntPtr luaState, string chunk);
 
             [DllImport(Lua51Dll, CallingConvention = CallingConvention.Cdecl)]
             public static extern int lua_pcall(IntPtr luaState, int nargs, int nresults, int errfunc);
 
             [DllImport(Lua51Dll, CallingConvention = CallingConvention.Cdecl)]
-            public static extern void lua_close(IntPtr luaState);
-
-            [DllImport(Lua51Dll, CallingConvention = CallingConvention.Cdecl)]
             public static extern double lua_tonumber(IntPtr luaState, int index);
 
             [DllImport(Lua51Dll, CallingConvention = CallingConvention.Cdecl)]
             public static extern int lua_gettop(IntPtr luaState);
+
+            [DllImport(Lua51Dll, CallingConvention = CallingConvention.Cdecl)]
+            public static extern void lua_settop(IntPtr luaState, int index);
+
+            public delegate int LuaCSFunction(IntPtr luaState);
         }
     }
 }

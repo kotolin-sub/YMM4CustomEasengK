@@ -19,17 +19,15 @@ namespace YMMCustomEaseK
         public string Text { get => text; set => Set(ref text, value); }
         string text = "return 0";
 
-        /*[Display(Name = "error", Description = "error")]
-        [TextEditor(AcceptsReturn = true)]
-        public string Error { get => text; set => Set(ref text, value); }
-        string error = string.Empty;*/
-
-        //対象を設定できるようにしてた時
-        //かと思ったけど普通にそのまま
         [Display(Name = "対象")]
         [EnumComboBox()]
         public Subject Enum { get => subject; set => Set(ref subject, value); }
         Subject subject = Subject.X;
+
+        [Display(Name = "インスタンスの共有")]
+        [ToggleSlider]
+        public bool Toggle { get => toggle; set => Set(ref toggle, value); }
+        bool toggle = true;
 
         [Display(Name = "スクリプト")]
         [FileSelector(YukkuriMovieMaker.Settings.FileGroupType.None)]
@@ -38,7 +36,6 @@ namespace YMMCustomEaseK
 
         public Animation piyo { get; } = new Animation(100, 0, 100);
 
-        //よく見てないのでサンプルのまま
         public override IEnumerable<string> CreateExoVideoFilters(int keyFrameIndex, ExoOutputDescription exoOutputDescription)
         {
             return Enumerable.Empty<string>();
@@ -57,6 +54,8 @@ namespace YMMCustomEaseK
             X,
             [Display(Name = "Y")]
             Y,
+            [Display(Name = "Z")]
+            ZX,
             [Display(Name = "拡大率")]
             Z,
             [Display(Name = "Z回転角")]
