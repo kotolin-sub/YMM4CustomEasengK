@@ -13,7 +13,7 @@
 * LuaJITなので言語のバージョンはLua5.1です
 ### 例
 対象 `X`<br>
-Func `return _FRAME -- こうすると1フレームに1px右に進む`
+Func `return _FRAME --こうすると1フレームに1px右に進む`
 * 円運動 
   * 対象 `X` Func `return 300*math.sin(math.pi/128*_FRAME)`
   * 対象 `Y` Func `return 300*math.cos(math.pi/128*_FRAME)`
