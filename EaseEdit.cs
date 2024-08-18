@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using YukkuriMovieMaker.Commons;
 using YukkuriMovieMaker.Controls;
 using YukkuriMovieMaker.Exo;
@@ -46,7 +46,7 @@ namespace YMMCustomEaseK
             return new EaseEditP(this);
         }
 
-        protected override IEnumerable<IAnimatable> GetAnimatables() => new[] { piyo };
+        protected override IEnumerable<IAnimatable> GetAnimatables() => new[] { piyo }; //ここempty配列渡せばいいけどめんどいから放置
 
         public enum Subject
         {
