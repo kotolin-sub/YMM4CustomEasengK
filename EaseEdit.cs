@@ -34,7 +34,6 @@ namespace YMMCustomEaseK
         public string File { get => file; set => Set(ref file, value); }
         string file = "";
 
-        public Animation piyo { get; } = new Animation(100, 0, 100);
 
         public override IEnumerable<string> CreateExoVideoFilters(int keyFrameIndex, ExoOutputDescription exoOutputDescription)
         {
@@ -46,7 +45,7 @@ namespace YMMCustomEaseK
             return new EaseEditP(this);
         }
 
-        protected override IEnumerable<IAnimatable> GetAnimatables() => new[] { piyo }; //ここempty配列渡せばいいけどめんどいから放置
+        protected override IEnumerable<IAnimatable> GetAnimatables() => Array.Empty<IAnimatable>();
 
         public enum Subject
         {
@@ -64,65 +63,6 @@ namespace YMMCustomEaseK
             XR,
             [Display(Name = "Y回転角")]
             YR,
-            /*[Display(Name = "反転")]
-            INV
-            [Display(Name ="中心座標(X)")]
-            CX,
-            [Display(Name ="中心座標(Y)")]
-            CY*/
         }
     }
-
-    /*public class EaseEditStart : IPlugin //ここコンボボックスに一覧で出そうとした残骸誰か実装したらプルリクしてね♡
-    {
-        public string Name => "カスタムイージングKStartUp";
-
-        static EaseEditStart()
-        {
-            string directoryPath = @".\user\plugin\CustomEasengK\script";
-
-            if (!Directory.Exists(directoryPath))
-            {
-                return;
-            }
-
-            List<FileData> filesData = GetFilesData(directoryPath);
-
-            string json = JsonSerializer.Serialize(filesData, new JsonSerializerOptions
-            {
-                WriteIndented = true
-            });
-
-
-            File.WriteAllText(@".\user\plugin\CustomEasengK\anmlist.json", json);
-        }
-
-        static List<FileData> GetFilesData(string directoryPath)
-        {
-            List<FileData> filesData = new List<FileData>();
-
-            try
-            {
-                string[] files = Directory.GetFiles(directoryPath, "*", SearchOption.AllDirectories);
-
-                foreach (string filePath in files)
-                {
-                    string fileName = Path.GetFileNameWithoutExtension(filePath);
-
-                    FileData fileData = new FileData
-                    {
-                        FileName = fileName,
-                        FilePath = filePath 
-                    };
-
-                    filesData.Add(fileData);
-                }
-            }
-            catch (Exception ex)
-            {
-            }
-
-            return filesData;
-        }
-    }*/
 }
