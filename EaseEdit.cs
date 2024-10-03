@@ -1,15 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using YukkuriMovieMaker.Commons;
 using YukkuriMovieMaker.Controls;
 using YukkuriMovieMaker.Exo;
 using YukkuriMovieMaker.Player.Video;
 using YukkuriMovieMaker.Plugin;
 using YukkuriMovieMaker.Plugin.Effects;
+using YukkuriMovieMaker.Resources.Localization;
+using YukkuriMovieMaker.Settings;
 
 namespace YMMCustomEaseK
 {
     [VideoEffect("カスタムイージングK", new[] { "配置" }, new string[] { }, isAviUtlSupported: false)]
-    [PluginDetails(AuthorName = "Kotolin",ContentId ="")]
     internal class EaseEdit : VideoEffectBase
     {
 
