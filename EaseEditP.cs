@@ -79,6 +79,13 @@ namespace YMMCustomEaseK
                         drawDesc.DrawPoint.X,
                         drawDesc.DrawPoint.Y + Convert.ToSingle(ReT)
                     )),
+                EaseEdit.Subject.ZX => new DrawDescription(
+                    drawDesc,
+                    draw: new System.Numerics.Vector3(
+                        drawDesc.DrawPoint.X,
+                        drawDesc.DrawPoint.Y,
+                        (float)(drawDesc.DrawPointZ + ReT)
+                        )),
                 EaseEdit.Subject.R => new DrawDescription(
                     drawDesc,
                     rotation: new System.Numerics.Vector3(
