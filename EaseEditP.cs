@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using Vortice.Direct2D1;
@@ -62,39 +62,54 @@ namespace YMMCustomEaseK
 
             lock (luaLock)
             {
-                ExecuteLuaScript(luaScript);
+                ExecLuaScript(luaScript);
             }
 
             return subject switch
             {
                 EaseEdit.Subject.X => new DrawDescription(
                     drawDesc,
-                    draw: new System.Numerics.Vector2(x + Convert.ToSingle(ReT), y)),
+                    draw: new System.Numerics.Vector2(
+                        drawDesc.DrawPoint.X + Convert.ToSingle(ReT),
+                        drawDesc.DrawPoint.Y
+                    )),
                 EaseEdit.Subject.Y => new DrawDescription(
                     drawDesc,
-                    draw: new System.Numerics.Vector2(x, y + Convert.ToSingle(ReT))),
-                EaseEdit.Subject.ZX => new DrawDescription(
-                    drawDesc,
-                    draw: new System.Numerics.Vector3(
-                        (float)(drawDesc.DrawPointZ + ReT)
-                        )),
+                    draw: new System.Numerics.Vector2(
+                        drawDesc.DrawPoint.X,
+                        drawDesc.DrawPoint.Y + Convert.ToSingle(ReT)
+                    )),
                 EaseEdit.Subject.R => new DrawDescription(
                     drawDesc,
-                    rotation: new System.Numerics.Vector3(xr, yr, r + Convert.ToSingle(ReT))),
+                    rotation: new System.Numerics.Vector3(
+                        drawDesc.Rotation.X,
+                        drawDesc.Rotation.Y,
+                        drawDesc.Rotation.Z + Convert.ToSingle(ReT)
+                    )),
                 EaseEdit.Subject.Z => new DrawDescription(
                     drawDesc,
-                    zoom: new System.Numerics.Vector2(zo + Convert.ToSingle(ReT), drawDesc.Zoom.Y)),
+                    zoom: new System.Numerics.Vector2(
+                        drawDesc.Zoom.X + Convert.ToSingle(ReT)
+                    )),
                 EaseEdit.Subject.XR => new DrawDescription(
                     drawDesc,
-                    rotation: new System.Numerics.Vector3(xr + Convert.ToSingle(ReT), yr, r)),
+                    rotation: new System.Numerics.Vector3(
+                        drawDesc.Rotation.X + Convert.ToSingle(ReT),
+                        drawDesc.Rotation.Y,
+                        drawDesc.Rotation.Z
+                    )),
                 EaseEdit.Subject.YR => new DrawDescription(
                     drawDesc,
-                    rotation: new System.Numerics.Vector3(xr, yr + Convert.ToSingle(ReT), r)),
+                    rotation: new System.Numerics.Vector3(
+                        drawDesc.Rotation.X,
+                        drawDesc.Rotation.Y + Convert.ToSingle(ReT),
+                        drawDesc.Rotation.Z
+                    )),
                 _ => drawDesc,
             };
         }
 
-        private void ExecuteLuaScript(string luaScript)
+        private void ExecLuaScript(string luaScript)
         {
             if (LuaJIT.luaL_loadstring(sharedLuaState, luaScript) == 0 && LuaJIT.lua_pcall(sharedLuaState, 0, 1, 0) == 0)
             {
