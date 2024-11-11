@@ -33,5 +33,4 @@ Func `return _FRAME --こうすると1フレームに1px右に進む`
 * `_CX` オブジェクトの中心X座標
 * `_CY` オブジェクトの中心Y座標
 ## その他
-* licenseはLuaJITに帰属
 * バグやら意見やら見つけたら@kotolind2a1に頼む
